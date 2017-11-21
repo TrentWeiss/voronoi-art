@@ -8,8 +8,9 @@ project(voronoi_art)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package( OpenCV REQUIRED )
+find_package( Boost 1.40 COMPONENTS program_options filesystem REQUIRED )
 add_executable(test_program test_program.cpp)
-target_link_libraries( test_program ${OpenCV_LIBS} )
+target_link_libraries( test_program ${OpenCV_LIBS} ${Boost_LIBRARIES})
 
 
 
