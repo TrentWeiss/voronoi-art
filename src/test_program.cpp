@@ -14,7 +14,7 @@ int main( int argc, char** argv )
         imageName = argv[1];
     }
     Mat image;
-    image = imread( imageName, IMREAD_COLOR ); // Read the file
+    image = imread( imageName, IMREAD_UNCHANGED ); // Read the file
     if( image.empty() )                      // Check for invalid input
     {
         cout <<  "Could not open or find the image" << std::endl ;
@@ -49,7 +49,8 @@ int main( int argc, char** argv )
   addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad );
 
   imshow( window_name, grad );
-
+  cout<<"Type of greyscale image: " << src_gray.type() << endl;
+  cout<<"Type of input image: " << image.type() << endl;
     waitKey(0); // Wait for a keystroke in the window
     return 0;
 }

@@ -8,7 +8,7 @@ project(voronoi_art)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package( OpenCV REQUIRED )
-add_executable(test_program src/test_program.cpp)
+add_executable(test_program test_program.cpp)
 target_link_libraries( test_program ${OpenCV_LIBS} )
 
 
