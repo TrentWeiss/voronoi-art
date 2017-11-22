@@ -1,10 +1,8 @@
-#include <opencv2/core.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/highgui.hpp>
-#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/opencv.hpp>
 #include <iostream>
 #include <string>
 #include <boost/filesystem.hpp>
+#include <boost/polygon/voronoi.hpp>
 namespace fs = boost::filesystem;
 using namespace cv;
 using namespace std;
@@ -38,11 +36,9 @@ int main(int argc, char** argv) {
 	else{
 		image_name = "eagle.jpg";
 	}
-    fs::path img(image_name);
-    fs::path full_path = fs::path("..") / fs::path("data")  / img;
-	String imageName(full_path.string()); // by default
+    fs::path full_path = fs::path("..") / fs::path("data")  / fs::path(image_name);
 	Mat image;
-	image = imread(imageName, IMREAD_UNCHANGED); // Read the file
+	image = imread(full_path.string(), IMREAD_UNCHANGED); // Read the file
 	if (image.empty())                      // Check for invalid input
 	{
 		cout << "Could not open or find the image" << std::endl;
