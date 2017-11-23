@@ -25,16 +25,16 @@ int main(int argc, char* argv[])
 {
 	std::string image_name;
 	int threshold;
-	if (argc > 1) {
-		threshold = std::atoi(argv[1]);
+	if(argc > 1){
+		image_name = std::string(argv[1]);
+	}else{
+		image_name = "eagle.jpg";
+	}
+	if (argc > 2) {
+		threshold = std::atoi(argv[2]);
 	}
 	else{
 		threshold=175;
-	}
-	if(argc > 2){
-		image_name = std::string(argv[2]);
-	}else{
-		image_name = "eagle.jpg";
 	}
     fs::path full_path = fs::path("..") / fs::path("data")  / fs::path(image_name);
 	Mat image;
@@ -60,10 +60,10 @@ int main(int argc, char* argv[])
     std::cout<<"Image is: " << grad.rows << " X " << grad.cols<<std::endl;
     Mat display(grad.size(),CV_8UC1,cv::Scalar(0,0,0));
     voronoi_processing::draw_voronoi_edges(display,vd);
-    namedWindow("Input Image", WINDOW_AUTOSIZE);
-    imshow("Input Image", image_resized);
     namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
     imshow("Voronoi Art", display);
+    namedWindow("Input Image", WINDOW_AUTOSIZE);
+    imshow("Input Image", image_resized);
 	waitKey(0);
     return 0;
 }

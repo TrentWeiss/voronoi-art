@@ -30,8 +30,8 @@ target_link_libraries( test_program
  ${PROJECT_NAME}_image_processing
  ${PROJECT_NAME}_voronoi_processing
  )
-add_executable(voronoi_test src/voronoi_test.cpp)
-target_link_libraries( voronoi_test 
+add_executable(voronoi_art src/voronoi_art.cpp)
+target_link_libraries( voronoi_art 
  ${PROJECT_NAME}_image_processing
  ${PROJECT_NAME}_voronoi_processing
  )
