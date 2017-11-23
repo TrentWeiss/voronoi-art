@@ -44,7 +44,10 @@ int main(int argc, char* argv[])
 		cout << "Could not open or find the image" << std::endl;
 		return -1;
 	}
-	Mat grad = image_processing::image_gradient(image);
+	Size size(700,700);
+	Mat image_resized;
+	resize(image,image_resized,size);//resize image
+	Mat grad = image_processing::image_gradient(image_resized);
 	std::vector<cv::Point> high_gradient_points =
 			image_processing::high_gradient_points(grad,threshold);
     std::vector<point_type> points(high_gradient_points.size());
@@ -57,9 +60,10 @@ int main(int argc, char* argv[])
     std::cout<<"Image is: " << grad.rows << " X " << grad.cols<<std::endl;
     Mat display(grad.size(),CV_8UC1,cv::Scalar(0,0,0));
     voronoi_processing::draw_voronoi_edges(display,vd);
-    namedWindow("Voronoi Art", WINDOW_AUTOSIZE); // Create a window for display.
-    imshow("Voronoi Art", display);                // Show our image inside it.
-	waitKey(0); // Wait for a keystroke in the window
-
+    namedWindow("Input Image", WINDOW_AUTOSIZE);
+    imshow("Input Image", image_resized);
+    namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
+    imshow("Voronoi Art", display);
+	waitKey(0);
     return 0;
 }
