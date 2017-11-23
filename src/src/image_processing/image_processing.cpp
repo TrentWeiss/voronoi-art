@@ -67,7 +67,7 @@ Mat image_processing::image_gradient(const Mat& image) {
 
 	return grad;
 }
-vector<Point> high_gradient_points(const Mat& grad,
+vector<Point> image_processing::high_gradient_points(const Mat& grad,
 		const int& threshold) {
 	vector<Point> rtn;
 	for(int y = 0; y < grad.rows; y++){
