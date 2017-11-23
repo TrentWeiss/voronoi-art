@@ -10,10 +10,20 @@ project(voronoi_art)
 
 find_package( OpenCV REQUIRED )
 find_package( Boost 1.40 COMPONENTS program_options filesystem REQUIRED )
-add_executable(test_program test_program.cpp)
-target_link_libraries( test_program ${OpenCV_LIBS} ${Boost_LIBRARIES})
-add_executable(voronoi_test voronoi_test.cpp)
-target_link_libraries( voronoi_test ${OpenCV_LIBS} ${Boost_LIBRARIES})
+include_directories(include)
+add_library(${PROJECT_NAME}_image_processing
+ src/image_processing/image_processing.cpp
+)
+target_link_libraries(${PROJECT_NAME}_image_processing 
+ ${OpenCV_LIBS}
+ ${Boost_LIBRARIES}
+)
+
+
+add_executable(test_program src/test_program.cpp)
+target_link_libraries( test_program ${PROJECT_NAME}_image_processing)
+add_executable(voronoi_test src/voronoi_test.cpp)
+target_link_libraries( voronoi_test ${PROJECT_NAME}_image_processing)
 
 
 
