@@ -40,7 +40,7 @@ string image_processing::type2str(int type) {
 
   return r;
 }
-Mat image_processing::imageGradient(const Mat& image) {
+Mat image_processing::image_gradient(const Mat& image) {
 	Mat src_gray;
 	Mat grad;
 	int scale = 1;
@@ -67,5 +67,19 @@ Mat image_processing::imageGradient(const Mat& image) {
 
 	return grad;
 }
-
+vector<Point> high_gradient_points(const Mat& grad,
+		const int& threshold) {
+	vector<Point> rtn;
+	for(int y = 0; y < grad.rows; y++){
+		for(int x = 0; x < grad.cols; x++){
+			Scalar intensity = grad.at<uchar>(y,x);
+			if(intensity[0]>=threshold){
+				rtn.push_back(Point(x,y));
+			}
+		}
+	}
+	return rtn;
+}
 } /* namespace voronoi_art */
+
+

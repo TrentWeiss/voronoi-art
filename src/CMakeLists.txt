@@ -16,13 +16,12 @@ add_library(${PROJECT_NAME}_image_processing
 )
 target_link_libraries(${PROJECT_NAME}_image_processing 
  ${OpenCV_LIBS}
- ${Boost_LIBRARIES}
 )
 add_library(${PROJECT_NAME}_voronoi_processing
  src/voronoi_processing/voronoi_processing.cpp
 )
 target_link_libraries(${PROJECT_NAME}_voronoi_processing 
- ${OpenCV_LIBS}
+ ${PROJECT_NAME}_image_processing 
  ${Boost_LIBRARIES}
 )
 

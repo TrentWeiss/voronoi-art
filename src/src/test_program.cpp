@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
 
 	const char* window_name = "Sobel Demo - Simple Edge Detector";
-	Mat grad = image_processing::imageGradient(image);
+	Mat grad = image_processing::image_gradient(image);
 	imshow(window_name, grad);
 	cout << "Type of input image: " << image_processing::type2str(image.type()) << endl;
 	Vec3b vec = image.at<Vec3b>(605,652);

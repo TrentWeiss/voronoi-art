@@ -1,13 +1,10 @@
-#include <opencv2/opencv.hpp>
 #include <iostream>
 #include <string>
 #include <boost/filesystem.hpp>
-#include <boost/polygon/voronoi.hpp>
-using namespace boost::polygon;
+#include <voronoi_processing/voronoi_processing.h>
 
-typedef voronoi_diagram<double> VD;
-typedef int coordinate_type;
-typedef point_data<coordinate_type> point_type;
+using namespace voronoi_art;
+
 int iterate_primary_edges1(const VD& vd) {
   int result = 0;
   for (VD::const_edge_iterator it = vd.edges().begin();
