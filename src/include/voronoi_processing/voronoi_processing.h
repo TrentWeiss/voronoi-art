@@ -17,14 +17,17 @@ typedef voronoi_diagram<double> VD;
 typedef int coordinate_type;
 typedef point_data<coordinate_type> point_type;
 class voronoi_processing {
-	typedef boost::function<void (VD::const_edge_iterator& edge)> iterate_edges_func;
+	typedef boost::function<void (VD::const_edge_iterator& edge, const VD& vd)> iterate_edges_func;
 public:
 	voronoi_processing();
 	virtual ~voronoi_processing();
 	static void iterate_voronoi_edges(const VD& voronoi_diagram,const iterate_edges_func& func);
-	static void draw_voronoi_edges(Mat& image, const VD& vd);
+	static void draw_edges_gradient_magnitude(Mat& out_image,const Mat& gradient,
+			const VD& vd, const vector<point_type>& points);
 
-	static void draw_edge(voronoi_art::VD::const_edge_iterator& edge, cv::Mat& image);
+	static void draw_edge(voronoi_art::VD::const_edge_iterator& edge,
+			const voronoi_art::VD& vd, cv::Mat& image,const cv::Mat& in_image,
+			const vector<point_type>& points);
 
 	static point_type cv_point_to_voronoi(const cv::Point& pt);
 

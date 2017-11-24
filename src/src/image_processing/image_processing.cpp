@@ -40,13 +40,21 @@ string image_processing::type2str(int type) {
 
   return r;
 }
+Mat image_processing::image_laplacian(const Mat& image){
+	int kernel_size = 11;
+	Mat output, src_gray;
+	int ddepth = IMAGE_TYPE;
+	cvtColor(image, src_gray, CV_RGB2GRAY, 1);
+	Laplacian(src_gray, output, ddepth, kernel_size);
+	return output;
+}
 Mat image_processing::image_gradient(const Mat& image) {
 	Mat src_gray;
 	Mat grad;
 	int scale = 1;
 	int delta = 0;
-	int ddepth = CV_16S;
-	cvtColor(image, src_gray, CV_RGB2GRAY);
+	int ddepth = IMAGE_TYPE;
+	cvtColor(image, src_gray, CV_RGB2GRAY, 1);
 	/// Generate grad_x and grad_y
 	Mat grad_x, grad_y;
 	Mat abs_grad_x, abs_grad_y;
@@ -68,7 +76,7 @@ Mat image_processing::image_gradient(const Mat& image) {
 	return grad;
 }
 vector<Point> image_processing::high_gradient_points(const Mat& grad,
-		const int& threshold) {
+		const float& threshold) {
 	vector<Point> rtn;
 	for(int y = 0; y < grad.rows; y++){
 		for(int x = 0; x < grad.cols; x++){
