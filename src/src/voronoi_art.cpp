@@ -25,18 +25,19 @@ int iterate_primary_edges1(const VD& vd) {
 int main(int argc, char* argv[])
 {
 	std::string image_name;
-	float threshold;
+	float float_threshold;
 	if(argc > 1){
 		image_name = std::string(argv[1]);
 	}else{
 		image_name = "eagle.jpg";
 	}
 	if (argc > 2) {
-		threshold = std::atof(argv[2]);
+		float_threshold = std::atof(argv[2]);
 	}
 	else{
-		threshold=0.5;
+		float_threshold=0.5;
 	}
+	int int_threshold = std::round(255.0*float_threshold);
     fs::path full_path = fs::path("..") / fs::path("data")  / fs::path(image_name);
 	Mat image;
 	image = imread(full_path.string(), IMREAD_COLOR); // Read the file
@@ -45,12 +46,13 @@ int main(int argc, char* argv[])
 		cout << "Could not open or find the image" << std::endl;
 		return -1;
 	}
-	Size size(700,700);
-	Mat image_resized;
+	Size size(500,500);
+	Mat image_resized,sharpenned_image;
 	resize(image,image_resized,size);//resize image
-	Mat sample = image_processing::image_laplacian(image_resized);
+	sharpenned_image = image_processing::sharpen(image_resized);
+	Mat sample = image_processing::image_gradient(sharpenned_image);
 	std::vector<cv::Point> high_gradient_points =
-			image_processing::high_gradient_points(sample,threshold);
+			image_processing::high_gradient_points(sample,int_threshold);
 	std::cout <<"Extracted " << high_gradient_points.size() << " points." <<std::endl;
     std::vector<point_type> points(high_gradient_points.size());
 
@@ -62,14 +64,14 @@ int main(int argc, char* argv[])
     std::cout<<"Image is: " << sample.rows << " X " << sample.cols<<std::endl;
     Mat display(image_resized.size(),IMAGE_TYPE,Scalar::all(0));
     Mat input_clone=image_resized.clone();
-    display=input_clone;
+    //display=input_clone;
     voronoi_processing::draw_edges_gradient_magnitude(display, sample, vd, points);
     namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
     imshow("Voronoi Art", display);
     namedWindow("Processed Image", WINDOW_AUTOSIZE);
     imshow("Processed Image", sample);
     namedWindow("Input Image", WINDOW_AUTOSIZE);
-    imshow("Input Image", image_resized);
+    imshow("Input Image", sharpenned_image);
 	waitKey(0);
     return 0;
 }

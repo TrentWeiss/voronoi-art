@@ -20,9 +20,10 @@ public:
 	image_processing();
 	virtual ~image_processing();
 	static Mat image_gradient(const Mat& image);
+	static Mat sharpen(const Mat& image);
 	static Mat image_laplacian(const Mat& image);
 	static string type2str(int type);
-	static vector<Point> high_gradient_points(const Mat& grad, const float& threshold);
+	static vector<Point> high_gradient_points(const Mat& grad, const int& threshold);
 };
 
 } /* namespace voronoi_art */

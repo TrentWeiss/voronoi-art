@@ -75,8 +75,17 @@ Mat image_processing::image_gradient(const Mat& image) {
 
 	return grad;
 }
+
+Mat image_processing::sharpen(const Mat& image) {
+	Mat rtn;
+	GaussianBlur(image, rtn, cv::Size(0, 0), 3);
+	addWeighted(image, 1.5, rtn, -0.5, 0, rtn);
+
+	return rtn;
+}
+
 vector<Point> image_processing::high_gradient_points(const Mat& grad,
-		const float& threshold) {
+		const int& threshold) {
 	vector<Point> rtn;
 	for(int y = 0; y < grad.rows; y++){
 		for(int x = 0; x < grad.cols; x++){
