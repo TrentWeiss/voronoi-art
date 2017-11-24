@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 	Size size(700,700);
 	Mat image_resized;
 	resize(image,image_resized,size);//resize image
-	Mat sample = image_processing::image_gradient(image_resized);
+	Mat sample = image_processing::image_laplacian(image_resized);
 	std::vector<cv::Point> high_gradient_points =
 			image_processing::high_gradient_points(sample,threshold);
 	std::cout <<"Extracted " << high_gradient_points.size() << " points." <<std::endl;
@@ -61,6 +61,8 @@ int main(int argc, char* argv[])
     std::cout<<"VD has " << vd.edges().size() << " edges." <<std::endl;
     std::cout<<"Image is: " << sample.rows << " X " << sample.cols<<std::endl;
     Mat display(image_resized.size(),IMAGE_TYPE,Scalar::all(0));
+    Mat input_clone=image_resized.clone();
+    display=input_clone;
     voronoi_processing::draw_edges_gradient_magnitude(display, sample, vd, points);
     namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
     imshow("Voronoi Art", display);
