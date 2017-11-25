@@ -7,13 +7,34 @@ project(voronoi_art)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-
+set(BUILD_SHARED_LIBS true)
 find_package( OpenCV REQUIRED )
 find_package( Boost 1.40 COMPONENTS program_options filesystem REQUIRED )
-add_executable(test_program test_program.cpp)
-target_link_libraries( test_program ${OpenCV_LIBS} ${Boost_LIBRARIES})
-add_executable(voronoi_test voronoi_test.cpp)
-target_link_libraries( voronoi_test ${OpenCV_LIBS} ${Boost_LIBRARIES})
+include_directories(include)
+add_library(${PROJECT_NAME}_image_processing
+ src/image_processing/image_processing.cpp
+)
+target_link_libraries(${PROJECT_NAME}_image_processing 
+ ${OpenCV_LIBS}
+)
+add_library(${PROJECT_NAME}_voronoi_processing
+ src/voronoi_processing/voronoi_processing.cpp
+)
+target_link_libraries(${PROJECT_NAME}_voronoi_processing 
+ ${PROJECT_NAME}_image_processing 
+ ${Boost_LIBRARIES}
+)
+
+add_executable(test_program src/test_program.cpp)
+target_link_libraries( test_program 
+ ${PROJECT_NAME}_image_processing
+ ${PROJECT_NAME}_voronoi_processing
+ )
+add_executable(voronoi_art src/voronoi_art.cpp)
+target_link_libraries( voronoi_art 
+ ${PROJECT_NAME}_image_processing
+ ${PROJECT_NAME}_voronoi_processing
+ )
 
 
 
