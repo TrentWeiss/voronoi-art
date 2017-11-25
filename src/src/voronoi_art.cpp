@@ -3,10 +3,7 @@
 #include <boost/filesystem.hpp>
 #include <voronoi_processing/voronoi_processing.h>
 
-namespace fs = boost::filesystem;
-
-using namespace voronoi_art;
-
+namespace voronoi_art{
 int iterate_primary_edges1(const VD& vd) {
   int result = 0;
   for (VD::const_edge_iterator it = vd.edges().begin();
@@ -21,6 +18,10 @@ int iterate_primary_edges1(const VD& vd) {
   }
   return result;
 }
+}
+namespace fs = boost::filesystem;
+
+using namespace voronoi_art;
 
 int main(int argc, char* argv[])
 {
@@ -33,43 +34,41 @@ int main(int argc, char* argv[])
 	}
 	if (argc > 2) {
 		float_threshold = std::atof(argv[2]);
-	}
-	else{
+	}else{
 		float_threshold=0.5;
 	}
-	int int_threshold = std::round(255.0*float_threshold);
     fs::path full_path = fs::path("..") / fs::path("data")  / fs::path(image_name);
 	Mat image;
-	image = imread(full_path.string(), IMREAD_COLOR); // Read the file
+	image = imread(full_path.string(), IMREAD_UNCHANGED); // Read the file
 	if (image.empty())                      // Check for invalid input
 	{
 		cout << "Could not open or find the image" << std::endl;
 		return -1;
 	}
-	Size size(500,500);
+	Size size(600,600);
 	Mat image_resized,sharpenned_image;
 	resize(image,image_resized,size);//resize image
 	sharpenned_image = image_processing::sharpen(image_resized);
-	Mat sample = image_processing::image_gradient(sharpenned_image);
-	std::vector<cv::Point> high_gradient_points =
-			image_processing::high_gradient_points(sample,int_threshold);
-	std::cout <<"Extracted " << high_gradient_points.size() << " points." <<std::endl;
-    std::vector<point_type> points(high_gradient_points.size());
+	std::vector<cv::Point> site_points;
+	vector<PixelFunctor> filters;
+	filters.push_back(image_processing::gradient_threshold(sharpenned_image,std::round(255.0*float_threshold)));
+	filters.push_back(image_processing::laplacian_threshold(sharpenned_image,std::round(255.0*float_threshold)));
 
-    for(const cv::Point& point: high_gradient_points){
+	site_points=image_processing::filter_intersection(sharpenned_image,filters);
+	std::cout <<"Extracted " << site_points.size() << " points." <<std::endl;
+    std::vector<point_type> points(site_points.size());
+
+    for(const cv::Point& point: site_points){
     	points.push_back(voronoi_processing::cv_point_to_voronoi(point));
     }
     VD vd;  construct_voronoi(points.begin(), points.end(), &vd);
     std::cout<<"VD has " << vd.edges().size() << " edges." <<std::endl;
-    std::cout<<"Image is: " << sample.rows << " X " << sample.cols<<std::endl;
-    Mat display(image_resized.size(),IMAGE_TYPE,Scalar::all(0));
+    Mat display(image_resized.size(),CV_8UC3,Scalar::all(0));
     Mat input_clone=image_resized.clone();
     //display=input_clone;
-    voronoi_processing::draw_edges_gradient_magnitude(display, sample, vd, points);
+    voronoi_processing::draw_edges_gradient_magnitude(display, sharpenned_image, vd, points);
     namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
     imshow("Voronoi Art", display);
-    namedWindow("Processed Image", WINDOW_AUTOSIZE);
-    imshow("Processed Image", sample);
     namedWindow("Input Image", WINDOW_AUTOSIZE);
     imshow("Input Image", sharpenned_image);
 	waitKey(0);

@@ -55,12 +55,13 @@ void voronoi_processing::draw_edge(voronoi_art::VD::const_edge_iterator& edge,
 
    const VD::vertex_type* v0 = edge->vertex0();
    const VD::vertex_type* v1 = edge->vertex1();
-   Scalar color = Scalar::all(255);
-   if(v0 && v1 && edge->cell()->contains_point())
+   Scalar color;
+   if(v0 && v1)
    {
 	  int r = points[edge->cell()->source_index()].y();
 	  int c = points[edge->cell()->source_index()].x();
-	  color = Scalar::all(in_image.at<uchar>(r,c));
+	//  std::cout<<"Reading pixel."<<std::endl;
+	  color = in_image.at<Vec3b>(r,c);
 	  cv::line(image,voronoi_vertex_to_cv_point(v0),voronoi_vertex_to_cv_point(v1), color);
    }
 
@@ -68,11 +69,6 @@ void voronoi_processing::draw_edge(voronoi_art::VD::const_edge_iterator& edge,
 void voronoi_processing::draw_edges_gradient_magnitude(Mat& image,
 		const Mat& in_image,
 		const VD& vd, const vector<point_type>& points) {
-//	VD::const_cell_iterator cell_it = vd.cells().begin();
-//	VD::cell_type cell = *cell_it;
-//	point_type pt = points.at(0);
-//	boost::polygon::polygon_data<int> polygon;
-//	boost::geometry::within<point_type,VD::cell_type>(pt,cell);
 
 	iterate_edges_func fun = boost::bind(draw_edge,_1,_2, image, in_image, points);
 	iterate_voronoi_edges(vd,fun);
