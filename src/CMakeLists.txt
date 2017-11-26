@@ -25,11 +25,7 @@ target_link_libraries(${PROJECT_NAME}_voronoi_processing
  ${Boost_LIBRARIES}
 )
 
-add_executable(test_program src/test_program.cpp)
-target_link_libraries( test_program 
- ${PROJECT_NAME}_image_processing
- ${PROJECT_NAME}_voronoi_processing
- )
+
 add_executable(voronoi_art src/voronoi_art.cpp)
 target_link_libraries( voronoi_art 
  ${PROJECT_NAME}_image_processing
