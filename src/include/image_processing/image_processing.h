@@ -8,7 +8,7 @@
 #ifndef INCLUDE_IMAGE_PROCESSING_H_
 #define INCLUDE_IMAGE_PROCESSING_H_
 
-#include <opencv2/opencv.hpp>
+#include <opencv/cv.hpp>
 #define IMAGE_TYPE CV_8U
 
 using namespace cv;
