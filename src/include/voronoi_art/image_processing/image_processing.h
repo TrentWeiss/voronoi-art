@@ -28,7 +28,6 @@ namespace voronoi_art {
 class image_processing {
 	boost::random::mt19937 gen;
 	boost::random::uniform_real_distribution<float> dist;
-	float random_float01();
 	bool random_threshold(const Mat& mat, const unsigned int& r, const unsigned int& c, const float& threshold);
 public:
 	image_processing();

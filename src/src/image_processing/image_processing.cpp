@@ -159,11 +159,8 @@ bool simple_threshold(const Mat& input, const unsigned int& r,
 	return intensity[0] >= (double)threshold;
 
 }
-float image_processing::random_float01(){
-	return dist(gen);
-}
 bool image_processing::random_threshold(const Mat& mat, const unsigned int& r, const unsigned int& c, const float& threshold){
-	return random_float01()>=threshold;
+	return dist(gen)>=threshold;
 }
 PixelFunctor image_processing::random_dropout(const float& dropout_prob){
 	return boost::bind(&image_processing::random_threshold, this, _1,_2,_3,dropout_prob);
