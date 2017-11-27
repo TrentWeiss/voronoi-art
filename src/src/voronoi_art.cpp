@@ -17,7 +17,9 @@ int main(int argc, char* argv[])
 	    ("input_image,i", po::value<string>(&image_name), "sets input image. Currently, only .jpg files are supported.")
 		("gradient_threshold,g",po::value<float>(&float_threshold)->default_value(0.0),"sets the threshold for selecting pixels based on image gradient on a 0-1 scale. Default: 0.25")
 		("random_threshold,r",po::value<float>(&float_prob)->default_value(0.75),"sets the probability that a pixel will randomly be excluded. Default: 0.75")
-	;
+		("draw_edges,e", "Draw the edges of the voronoi diagram")
+		("draw_cells,c", "Draw the cells of the voronoi diagram")
+		;
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
 	po::notify(vm);
@@ -63,7 +65,12 @@ int main(int argc, char* argv[])
     Mat display(image_resized.size(),CV_8UC3,Scalar::all(0));
     Mat input_clone=image_resized.clone();
     //display=input_clone;
-    vp.draw_cells(display);
+    if(vm.count("draw_edges")){
+    	vp.draw_edges(display);
+    }
+    if(vm.count("draw_cells")){
+    	vp.draw_cells(display);
+    }
     namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
     imshow("Voronoi Art", display);
     namedWindow("Input Image", WINDOW_AUTOSIZE);
