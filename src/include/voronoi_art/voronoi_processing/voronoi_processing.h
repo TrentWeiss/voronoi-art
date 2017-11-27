@@ -7,7 +7,7 @@
 
 #ifndef INCLUDE_VORONOI_PROCESSING_H_
 #define INCLUDE_VORONOI_PROCESSING_H_
-#include <image_processing/image_processing.h>
+#include <voronoi_art/image_processing/image_processing.h>
 #include <boost/polygon/voronoi.hpp>
 #include <boost/function.hpp>
 

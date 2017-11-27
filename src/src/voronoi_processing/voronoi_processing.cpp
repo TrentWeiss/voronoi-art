@@ -5,7 +5,7 @@
  *      Author: trent
  */
 
-#include "voronoi_processing/voronoi_processing.h"
+#include "voronoi_art/voronoi_processing/voronoi_processing.h"
 #include <math.h>
 #include <boost/bind.hpp>
 #include <boost/polygon/polygon.hpp>

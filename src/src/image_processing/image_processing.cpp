@@ -5,7 +5,7 @@
  *      Author: trent
  */
 
-#include "image_processing/image_processing.h"
+#include "voronoi_art/image_processing/image_processing.h"
 #include <iostream>
 #include <string>
 #include <boost/bind.hpp>

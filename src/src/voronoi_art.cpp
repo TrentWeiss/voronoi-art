@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include <voronoi_processing/voronoi_processing.h>
+#include <voronoi_art/voronoi_processing/voronoi_processing.h>
 #include <boost/program_options.hpp>
 namespace voronoi_art{
 int iterate_primary_edges1(const VD& vd) {
@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
 	}
 	if(image_name.compare("")==0){
 		std::cerr<<"Input jpg must be specified."<<std::endl;
+		desc.print(std::cerr,25);
 		exit(-1);
 	}
 	Mat image;

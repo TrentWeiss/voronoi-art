@@ -36,5 +36,5 @@ install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_voronoi_processing ${PROJECT_NAM
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )
-
+install(DIRECTORY include/voronoi_art DESTINATION include )
 
