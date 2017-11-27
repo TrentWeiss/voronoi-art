@@ -9,11 +9,11 @@
 #include <iostream>
 #include <string>
 #include <boost/bind.hpp>
+#include <ctime>
 namespace voronoi_art {
 
-image_processing::image_processing() {
+image_processing::image_processing() : gen(std::time(0)), dist(0.0, 1.0){
 	// TODO Auto-generated constructor stub
-
 }
 
 image_processing::~image_processing() {
@@ -158,6 +158,15 @@ bool simple_threshold(const Mat& input, const unsigned int& r,
 	Scalar intensity = input.at<uchar>(r, c);
 	return intensity[0] >= (double)threshold;
 
+}
+float image_processing::random_float01(){
+	return dist(gen);
+}
+bool image_processing::random_threshold(const Mat& mat, const unsigned int& r, const unsigned int& c, const float& threshold){
+	return random_float01()>=threshold;
+}
+PixelFunctor image_processing::random_dropout(const float& dropout_prob){
+	return boost::bind(&image_processing::random_threshold, this, _1,_2,_3,dropout_prob);
 }
 PixelFunctor image_processing::gradient_threshold(const Mat& input,
 		const unsigned int& threshold) {

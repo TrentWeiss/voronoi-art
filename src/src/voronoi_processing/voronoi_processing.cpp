@@ -10,7 +10,6 @@
 #include <boost/bind.hpp>
 #include <boost/polygon/polygon.hpp>
 #include <boost/geometry.hpp>
-
 namespace voronoi_art {
 
 voronoi_processing::voronoi_processing() {

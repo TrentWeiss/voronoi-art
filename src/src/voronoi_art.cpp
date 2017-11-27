@@ -48,13 +48,15 @@ int main(int argc, char* argv[])
 	Size size(600,600);
 	Mat image_resized,sharpenned_image;
 	resize(image,image_resized,size);//resize image
-	sharpenned_image = image_processing::sharpen(image_resized);
+	voronoi_art::image_processing im_proc;
+	sharpenned_image = im_proc.sharpen(image_resized);
 	std::vector<cv::Point> site_points;
 	vector<PixelFunctor> filters;
-	filters.push_back(image_processing::gradient_threshold(sharpenned_image,std::round(255.0*float_threshold)));
-	filters.push_back(image_processing::laplacian_threshold(sharpenned_image,std::round(255.0*float_threshold)));
+	//filters.push_back(im_proc.gradient_threshold(sharpenned_image,std::round(255.0*float_threshold)));
+	//filters.push_back(im_proc.laplacian_threshold(sharpenned_image,std::round(255.0*float_threshold)));
+	filters.push_back(im_proc.random_dropout(0.95));
 
-	site_points=image_processing::filter_intersection(sharpenned_image,filters);
+	site_points=im_proc.filter_intersection(sharpenned_image,filters);
 	std::cout <<"Extracted " << site_points.size() << " points." <<std::endl;
     std::vector<point_type> points(site_points.size());
 

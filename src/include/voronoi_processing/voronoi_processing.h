@@ -10,6 +10,7 @@
 #include <image_processing/image_processing.h>
 #include <boost/polygon/voronoi.hpp>
 #include <boost/function.hpp>
+
 namespace voronoi_art {
 using namespace boost::polygon;
 

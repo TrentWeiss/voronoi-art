@@ -9,6 +9,8 @@
 #define INCLUDE_IMAGE_PROCESSING_H_
 
 #include <opencv/cv.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
 #define IMAGE_TYPE CV_8U
 
 using namespace cv;
@@ -24,17 +26,23 @@ typedef boost::function<bool (const Mat& mat, const unsigned int& r, const unsig
 #endif
 namespace voronoi_art {
 class image_processing {
+	boost::random::mt19937 gen;
+	boost::random::uniform_real_distribution<float> dist;
+	float random_float01();
+	bool random_threshold(const Mat& mat, const unsigned int& r, const unsigned int& c, const float& threshold);
 public:
 	image_processing();
 	virtual ~image_processing();
-	static string type2str(int type);
-	static Mat sharpen(const Mat& image);
-	static Mat image_gradient(const Mat& image);
-	static Mat image_laplacian(const Mat& image);
-	static vector<Point> filter_intersection(const Mat& input, const vector<PixelFunctor>& filters);
-	static vector<Point> filter_union(const Mat& input, const vector<PixelFunctor>& filters);
-	static PixelFunctor gradient_threshold(const Mat& input, const unsigned int& threshold);
-	static PixelFunctor laplacian_threshold(const Mat& input, const unsigned int& threshold);
+
+	string type2str(int type);
+	Mat sharpen(const Mat& image);
+	Mat image_gradient(const Mat& image);
+	Mat image_laplacian(const Mat& image);
+	vector<Point> filter_intersection(const Mat& input, const vector<PixelFunctor>& filters);
+	vector<Point> filter_union(const Mat& input, const vector<PixelFunctor>& filters);
+	PixelFunctor gradient_threshold(const Mat& input, const unsigned int& threshold);
+	PixelFunctor laplacian_threshold(const Mat& input, const unsigned int& threshold);
+	PixelFunctor random_dropout(const float& dropout_prob);
 };
 
 } /* namespace voronoi_art */
