@@ -29,10 +29,10 @@ int main(int argc, char* argv[])
 	float float_threshold, float_prob;
 	po::options_description desc("Allowed options");
 	desc.add_options()
-	    ("help,H", "produce help message")
-	    ("input_image,I", po::value<string>(&image_name), "sets input image")
-		("gradient_threshold,G",po::value<float>(&float_threshold)->default_value(0.0),"sets the threshold for selecting pixels based on image gradient on a 0-1 scale. Default: 0.25")
-		("random_threshold,R",po::value<float>(&float_prob)->default_value(0.75),"sets the probability that a pixel will randomly be excluded. Default: 0.75")
+	    ("help,h", "produce help message")
+	    ("input_image,i", po::value<string>(&image_name), "sets input image. Currently, only .jpg files are supported.")
+		("gradient_threshold,g",po::value<float>(&float_threshold)->default_value(0.0),"sets the threshold for selecting pixels based on image gradient on a 0-1 scale. Default: 0.25")
+		("random_threshold,r",po::value<float>(&float_prob)->default_value(0.75),"sets the probability that a pixel will randomly be excluded. Default: 0.75")
 	;
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
