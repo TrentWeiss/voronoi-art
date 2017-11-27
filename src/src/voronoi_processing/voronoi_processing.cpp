@@ -39,10 +39,10 @@ void voronoi_processing::iterate_voronoi_edges(
 	  for (VD::const_edge_iterator it = voronoi_diagram.edges().begin();
 	       it != voronoi_diagram.edges().end(); ++it) {
 
-	    if (it->is_primary())
-	    {
+	  //  if (it->is_primary())
+	  //  {
 	    	func(it, voronoi_diagram);
-	    }
+	  //  }
 	  }
 }
 void voronoi_processing::draw_edge(voronoi_art::VD::const_edge_iterator& edge,
@@ -65,7 +65,7 @@ void voronoi_processing::draw_edge(voronoi_art::VD::const_edge_iterator& edge,
    }
 
 }
-void voronoi_processing::draw_edges_gradient_magnitude(Mat& image,
+void voronoi_processing::draw_edges(Mat& image,
 		const Mat& in_image,
 		const VD& vd, const vector<point_type>& points) {
 

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include <boost/filesystem.hpp>
-#include <voronoi_processing/voronoi_processing.h>
 
+#include <voronoi_processing/voronoi_processing.h>
+#include <boost/program_options.hpp>
 namespace voronoi_art{
 int iterate_primary_edges1(const VD& vd) {
   int result = 0;
@@ -19,27 +19,34 @@ int iterate_primary_edges1(const VD& vd) {
   return result;
 }
 }
-namespace fs = boost::filesystem;
 
+namespace po = boost::program_options;
 using namespace voronoi_art;
 
 int main(int argc, char* argv[])
 {
 	std::string image_name;
-	float float_threshold;
-	if(argc > 1){
-		image_name = std::string(argv[1]);
-	}else{
-		image_name = "eagle.jpg";
+	float float_threshold, float_prob;
+	po::options_description desc("Allowed options");
+	desc.add_options()
+	    ("help,H", "produce help message")
+	    ("input_image,I", po::value<string>(&image_name), "sets input image")
+		("gradient_threshold,G",po::value<float>(&float_threshold)->default_value(0.0),"sets the threshold for selecting pixels based on image gradient on a 0-1 scale. Default: 0.25")
+		("random_threshold,R",po::value<float>(&float_prob)->default_value(0.75),"sets the probability that a pixel will randomly be excluded. Default: 0.75")
+	;
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);
+	if(vm.count("help") or vm.count("H")){
+		desc.print(std::cout,25);
+		exit(0);
 	}
-	if (argc > 2) {
-		float_threshold = std::atof(argv[2]);
-	}else{
-		float_threshold=0.5;
+	if(image_name.compare("")==0){
+		std::cerr<<"Input jpg must be specified."<<std::endl;
+		exit(-1);
 	}
-    fs::path full_path = fs::path("..") / fs::path("data")  / fs::path(image_name);
 	Mat image;
-	image = imread(full_path.string(), IMREAD_UNCHANGED); // Read the file
+	image = imread(image_name, IMREAD_UNCHANGED); // Read the file
 	if (image.empty())                      // Check for invalid input
 	{
 		cout << "Could not open or find the image" << std::endl;
@@ -52,9 +59,9 @@ int main(int argc, char* argv[])
 	sharpenned_image = im_proc.sharpen(image_resized);
 	std::vector<cv::Point> site_points;
 	vector<PixelFunctor> filters;
-	//filters.push_back(im_proc.gradient_threshold(sharpenned_image,std::round(255.0*float_threshold)));
-	//filters.push_back(im_proc.laplacian_threshold(sharpenned_image,std::round(255.0*float_threshold)));
-	filters.push_back(im_proc.random_dropout(0.95));
+	filters.push_back(im_proc.gradient_threshold(sharpenned_image,std::round(255.0*float_threshold)));
+	filters.push_back(im_proc.laplacian_threshold(sharpenned_image,std::round(255.0*float_threshold)));
+	filters.push_back(im_proc.random_dropout(float_prob));
 
 	site_points=im_proc.filter_intersection(sharpenned_image,filters);
 	std::cout <<"Extracted " << site_points.size() << " points." <<std::endl;
@@ -68,7 +75,7 @@ int main(int argc, char* argv[])
     Mat display(image_resized.size(),CV_8UC3,Scalar::all(0));
     Mat input_clone=image_resized.clone();
     //display=input_clone;
-    voronoi_processing::draw_edges_gradient_magnitude(display, sharpenned_image, vd, points);
+    voronoi_processing::draw_edges(display, sharpenned_image, vd, points);
     namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
     imshow("Voronoi Art", display);
     namedWindow("Input Image", WINDOW_AUTOSIZE);

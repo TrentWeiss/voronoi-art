@@ -23,7 +23,7 @@ public:
 	voronoi_processing();
 	virtual ~voronoi_processing();
 	static void iterate_voronoi_edges(const VD& voronoi_diagram,const iterate_edges_func& func);
-	static void draw_edges_gradient_magnitude(Mat& out_image,const Mat& gradient,
+	static void draw_edges(Mat& out_image,const Mat& gradient,
 			const VD& vd, const vector<point_type>& points);
 
 	static void draw_edge(voronoi_art::VD::const_edge_iterator& edge,
