@@ -99,26 +99,7 @@ Mat image_processing::sharpen(const Mat& image) {
 
 	return rtn;
 }
-typedef uchar Pixel;
-struct Operator {
-	void operator ()(Pixel &pixel, const int * position) const {
-	}
-};
-template<typename pixel_type> inline
-unsigned int average(const Mat& mat) {
-	unsigned int sum = 0;
-	unsigned int num_pixels = mat.rows * mat.cols;
-	for (unsigned int r = 0; r < mat.rows; r++) {
-		for (unsigned int c = 0; c < mat.cols; c++) {
-			Scalar pix = mat.at<pixel_type>(r, c);
-			for (unsigned int i = 0; i < 4; i++) {
-				sum += pix[i];
-			}
-		}
-	}
-	unsigned int average = (unsigned int) ((float) (sum) / (float) (num_pixels));
-	return average;
-}
+
 vector<Point> image_processing::filter_intersection(const Mat& input,
 		const vector<PixelFunctor>& filters) {
 	vector<Point> rtn;
@@ -132,7 +113,7 @@ vector<Point> image_processing::filter_intersection(const Mat& input,
 				}
 			}
 			if(include_pixel){
-				rtn.push_back(Point(c, r));
+				rtn.push_back(cv_float_point(c, r));
 			}
 		}
 	}
@@ -145,7 +126,7 @@ vector<Point> image_processing::filter_union(const Mat& input,
 		for (unsigned int c = 0; c < input.cols; ++c) {
 			for (const PixelFunctor filter : filters) {
 				if (filter(input, r, c)) {
-					rtn.push_back(Point(c, r));
+					rtn.push_back(cv_float_point(c, r));
 					break;
 				}
 			}
@@ -162,6 +143,20 @@ bool simple_threshold(const Mat& input, const unsigned int& r,
 bool image_processing::random_threshold(const Mat& mat, const unsigned int& r, const unsigned int& c, const float& threshold){
 	return dist(gen)>=threshold;
 }
+
+vector<Pixel> image_processing::image_to_point_vector(const Mat& image) {
+	vector<Pixel> rtn(image.rows * image.cols);
+	unsigned int index = 0;
+	for(unsigned int r = 0; r < image.rows; ++r){
+		for(unsigned int c = 0; c < image.cols; ++c){
+			rtn[index].float_point_=cv_float_point((float)c, (float)r);
+			rtn[index].int_point_=cv_int_point(c, r);
+			rtn[index++].color_=image.at<Vec3b>(r,c);
+		}
+	}
+	return rtn;
+}
+
 PixelFunctor image_processing::random_dropout(const float& dropout_prob){
 	return boost::bind(&image_processing::random_threshold, this, _1,_2,_3,dropout_prob);
 }

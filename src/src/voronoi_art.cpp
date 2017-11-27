@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
     Mat display(image_resized.size(),CV_8UC3,Scalar::all(0));
     Mat input_clone=image_resized.clone();
     //display=input_clone;
-    vp.draw_edges(display);
+    vp.draw_cells(display);
     namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
     imshow("Voronoi Art", display);
     namedWindow("Input Image", WINDOW_AUTOSIZE);

@@ -13,6 +13,7 @@ find_package( Boost 1.58 COMPONENTS program_options REQUIRED )
 include_directories(include)
 add_library(${PROJECT_NAME}_image_processing
  src/image_processing/image_processing.cpp
+ src/image_processing/pixel.cpp
 )
 target_link_libraries(${PROJECT_NAME}_image_processing 
  ${OpenCV_LIBS}
