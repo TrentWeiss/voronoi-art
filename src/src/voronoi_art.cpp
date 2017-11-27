@@ -60,9 +60,9 @@ int main(int argc, char* argv[])
 	sharpenned_image = im_proc.sharpen(image_resized);
 	std::vector<cv::Point> site_points;
 	vector<PixelFunctor> filters;
+	filters.push_back(im_proc.random_dropout(float_prob));
 	filters.push_back(im_proc.gradient_threshold(sharpenned_image,std::round(255.0*float_threshold)));
 	filters.push_back(im_proc.laplacian_threshold(sharpenned_image,std::round(255.0*float_threshold)));
-	filters.push_back(im_proc.random_dropout(float_prob));
 
 	site_points=im_proc.filter_intersection(sharpenned_image,filters);
 	std::cout <<"Extracted " << site_points.size() << " points." <<std::endl;
