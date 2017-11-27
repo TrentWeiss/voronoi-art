@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 	if (vm.count("draw_cells")) {
 		vp.draw_cells(display);
 	}
-	if (output_image.compare("")) {
+	if (!output_image.empty()) {
 		cv::imwrite(output_image,display);
 	} else {
 		namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
