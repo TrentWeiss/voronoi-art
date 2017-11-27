@@ -1,24 +1,8 @@
 #include <iostream>
 #include <string>
-
-#include <voronoi_art/voronoi_processing/voronoi_processing.h>
+#include "voronoi_art/image_processing/image_processing.h"
+#include "voronoi_art/voronoi_processing/voronoi_processing.h"
 #include <boost/program_options.hpp>
-namespace voronoi_art{
-int iterate_primary_edges1(const VD& vd) {
-  int result = 0;
-  for (VD::const_edge_iterator it = vd.edges().begin();
-       it != vd.edges().end(); ++it) {
-
-    if (it->is_primary() && it->vertex0()!=NULL && it->vertex1()!=NULL)
-    {
-    	result++;
-    	std::cout<< "(" << it->vertex0()->x() <<", "<<it->vertex0()->y()<<")"
-    			", (" << it->vertex1()->x() <<", "<<it->vertex1()->y()<<")"<<std::endl;
-    }
-  }
-  return result;
-}
-}
 
 namespace po = boost::program_options;
 using namespace voronoi_art;
@@ -71,7 +55,7 @@ int main(int argc, char* argv[])
     for(const cv::Point& point: cv_points){
     	site_points.push_back(voronoi_processing::cv_point_to_voronoi(point));
     }
-    voronoi_processing vp(sharpenned_image, site_points);
+    const voronoi_processing vp(sharpenned_image, site_points);
 
     std::cout<<"VD has " << vp.get_voronoi_diagram()->edges().size() << " edges." <<std::endl;
 
