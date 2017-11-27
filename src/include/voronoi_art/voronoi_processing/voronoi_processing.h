@@ -7,33 +7,46 @@
 
 #ifndef INCLUDE_VORONOI_PROCESSING_H_
 #define INCLUDE_VORONOI_PROCESSING_H_
-#include <voronoi_art/image_processing/image_processing.h>
+#include <opencv/cv.hpp>
 #include <boost/polygon/voronoi.hpp>
-#include <boost/function.hpp>
+#include "voronoi_art/image_processing/pixel.h"
 
 namespace voronoi_art {
+using namespace std;
+using namespace cv;
 using namespace boost::polygon;
 
 typedef voronoi_diagram<double> VD;
-typedef int coordinate_type;
+typedef double coordinate_type;
 typedef point_data<coordinate_type> point_type;
 class voronoi_processing {
-	typedef boost::function<void (VD::const_edge_iterator& edge, const VD& vd)> iterate_edges_func;
 public:
-	voronoi_processing();
+
+	voronoi_processing(const Mat& input_image,
+			const std::vector<point_type>& site_points);
 	virtual ~voronoi_processing();
-	static void iterate_voronoi_edges(const VD& voronoi_diagram,const iterate_edges_func& func);
-	static void draw_edges(Mat& out_image,const Mat& gradient,
-			const VD& vd, const vector<point_type>& points);
 
-	static void draw_edge(voronoi_art::VD::const_edge_iterator& edge,
-			const voronoi_art::VD& vd, cv::Mat& image,const cv::Mat& in_image,
-			const vector<point_type>& points);
+	void draw_edges(Mat& out_image) const;
+	void draw_cells(Mat& image) const;
 
-	static point_type cv_point_to_voronoi(const cv::Point& pt);
+	static cv_float_point voronoi_vertex_to_cv_point(const VD::vertex_type* vertex);
+	static point_type cv_point_to_voronoi(const cv_float_point& pt);
+	static vector<cv_float_point> voronoi_cell_to_cv_float_polygon(const VD::cell_type cell);
+	static vector<cv_int_point> voronoi_cell_to_cv_int_polygon(const VD::cell_type cell);
 
-	static cv::Point voronoi_vertex_to_cv_point(const VD::vertex_type* vertex);
 
+	const voronoi_art::VD* get_voronoi_diagram() const;
+	const std::vector<point_type>& get_site_points() const;
+
+protected:
+	virtual void draw_edge(voronoi_art::VD::const_edge_iterator& edge, Mat& image) const;
+	virtual void draw_cell(voronoi_art::VD::const_cell_iterator& cell, vector<Pixel>& pixels_copy, Mat& image) const;
+
+	voronoi_art::VD* vd_;
+	std::vector<point_type> site_points_;
+	std::vector<Pixel> input_image_pixels_;
+	std::map<unsigned int, std::vector<Pixel> > cell_map_;
+	Mat input_image_;
 };
 
 } /* namespace voronoi_art */

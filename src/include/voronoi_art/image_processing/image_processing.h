@@ -8,9 +8,9 @@
 #ifndef INCLUDE_IMAGE_PROCESSING_H_
 #define INCLUDE_IMAGE_PROCESSING_H_
 
-#include <opencv/cv.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
+#include "voronoi_art/image_processing/pixel.h"
 #define IMAGE_TYPE CV_8U
 
 using namespace cv;
@@ -25,6 +25,11 @@ typedef boost::function<bool (const Mat& mat, const unsigned int& r, const unsig
 
 #endif
 namespace voronoi_art {
+//struct Pixel{
+//
+//	cv::Point point_;
+//	Scalar color_;
+//};
 class image_processing {
 	boost::random::mt19937 gen;
 	boost::random::uniform_real_distribution<float> dist;
@@ -37,6 +42,7 @@ public:
 	Mat sharpen(const Mat& image);
 	Mat image_gradient(const Mat& image);
 	Mat image_laplacian(const Mat& image);
+	static vector<Pixel> image_to_point_vector(const Mat& image);
 	vector<Point> filter_intersection(const Mat& input, const vector<PixelFunctor>& filters);
 	vector<Point> filter_union(const Mat& input, const vector<PixelFunctor>& filters);
 	PixelFunctor gradient_threshold(const Mat& input, const unsigned int& threshold);
