@@ -58,25 +58,28 @@ int main(int argc, char* argv[])
 	resize(image,image_resized,size);//resize image
 	voronoi_art::image_processing im_proc;
 	sharpenned_image = im_proc.sharpen(image_resized);
-	std::vector<cv::Point> site_points;
+	std::vector<cv::Point> cv_points;
 	vector<PixelFunctor> filters;
 	filters.push_back(im_proc.random_dropout(float_prob));
 	filters.push_back(im_proc.gradient_threshold(sharpenned_image,std::round(255.0*float_threshold)));
 	filters.push_back(im_proc.laplacian_threshold(sharpenned_image,std::round(255.0*float_threshold)));
 
-	site_points=im_proc.filter_intersection(sharpenned_image,filters);
-	std::cout <<"Extracted " << site_points.size() << " points." <<std::endl;
-    std::vector<point_type> points(site_points.size());
+	cv_points=im_proc.filter_intersection(sharpenned_image,filters);
+	std::cout <<"Extracted " << cv_points.size() << " points." <<std::endl;
+    std::vector<point_type> site_points(cv_points.size());
 
-    for(const cv::Point& point: site_points){
-    	points.push_back(voronoi_processing::cv_point_to_voronoi(point));
+    for(const cv::Point& point: cv_points){
+    	site_points.push_back(voronoi_processing::cv_point_to_voronoi(point));
     }
-    VD vd;  construct_voronoi(points.begin(), points.end(), &vd);
-    std::cout<<"VD has " << vd.edges().size() << " edges." <<std::endl;
+    voronoi_processing vp(sharpenned_image, site_points);
+
+    std::cout<<"VD has " << vp.get_voronoi_diagram()->edges().size() << " edges." <<std::endl;
+
+
     Mat display(image_resized.size(),CV_8UC3,Scalar::all(0));
     Mat input_clone=image_resized.clone();
     //display=input_clone;
-    voronoi_processing::draw_edges(display, sharpenned_image, vd, points);
+    vp.draw_edges(display);
     namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
     imshow("Voronoi Art", display);
     namedWindow("Input Image", WINDOW_AUTOSIZE);

@@ -8,21 +8,27 @@
 #include "voronoi_art/voronoi_processing/voronoi_processing.h"
 #include <math.h>
 #include <boost/bind.hpp>
-#include <boost/polygon/polygon.hpp>
-#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
+#include <boost/geometry/geometries/polygon.hpp>
+#include <boost/geometry/algorithms/within.hpp>
+typedef boost::geometry::model::d2::point_xy<double> point_poly;
 namespace voronoi_art {
 
-voronoi_processing::voronoi_processing() {
-	// TODO Auto-generated constructor stub
 
+voronoi_processing::voronoi_processing(const cv::Mat& input_image,
+		const std::vector<point_type>& site_points) {
+	vd_ = new VD();
+	input_image_ = input_image.clone();
+	site_points_ = std::vector<point_type>(site_points);
+	construct_voronoi(site_points_.begin(), site_points_.end(), vd_);
 }
-
 voronoi_processing::~voronoi_processing() {
 	// TODO Auto-generated destructor stub
+	delete vd_;
 }
 
 point_type voronoi_processing::cv_point_to_voronoi(const cv::Point& pt) {
-	return point_type(pt.x,pt.y);
+	return point_type(pt.x, pt.y);
 }
 
 cv::Point voronoi_processing::voronoi_vertex_to_cv_point(
@@ -32,44 +38,43 @@ cv::Point voronoi_processing::voronoi_vertex_to_cv_point(
 	return cv::Point(x, y);
 }
 
+const voronoi_art::VD* voronoi_processing::get_voronoi_diagram() const {
+	return vd_;
+}
 
+const std::vector<point_type>& voronoi_processing::get_site_points() const {
+	return site_points_;
+}
 
-void voronoi_processing::iterate_voronoi_edges(
-		const VD& voronoi_diagram, const iterate_edges_func& func) {
-	  for (VD::const_edge_iterator it = voronoi_diagram.edges().begin();
-	       it != voronoi_diagram.edges().end(); ++it) {
+void voronoi_processing::draw_cells(cv::Mat& image) {
+}
 
-	    if (it->is_primary())
-	    {
-	    	func(it, voronoi_diagram);
-	    }
-	  }
+void voronoi_processing::draw_cell(voronoi_art::VD::const_cell_iterator& cell,
+		cv::Mat& image) {
+
 }
 void voronoi_processing::draw_edge(voronoi_art::VD::const_edge_iterator& edge,
-		const voronoi_art::VD& vd,
-		cv::Mat& image,
-		const cv::Mat& in_image,
-		const vector<point_type>& points)
-{
+		cv::Mat& image) {
 
-   const VD::vertex_type* v0 = edge->vertex0();
-   const VD::vertex_type* v1 = edge->vertex1();
-   Scalar color;
-   if(v0 && v1)
-   {
-	  int r = points[edge->cell()->source_index()].y();
-	  int c = points[edge->cell()->source_index()].x();
-	//  std::cout<<"Reading pixel."<<std::endl;
-	  color = in_image.at<Vec3b>(r,c);
-	  cv::line(image,voronoi_vertex_to_cv_point(v0),voronoi_vertex_to_cv_point(v1), color);
-   }
+	const VD::vertex_type* v0 = edge->vertex0();
+	const VD::vertex_type* v1 = edge->vertex1();
+	Scalar color;
+	if (v0 && v1) {
+		int r = site_points_[edge->cell()->source_index()].y();
+		int c = site_points_[edge->cell()->source_index()].x();
+		color = input_image_.at<Vec3b>(r, c);
+		cv::line(image, voronoi_vertex_to_cv_point(v0),
+				voronoi_vertex_to_cv_point(v1), color);
+	}
 
 }
-void voronoi_processing::draw_edges(Mat& image,
-		const Mat& in_image,
-		const VD& vd, const vector<point_type>& points) {
+void voronoi_processing::draw_edges(Mat& image) {
+	for (VD::const_edge_iterator it = vd_->edges().begin();
+			it != vd_->edges().end(); ++it) {
 
-	iterate_edges_func fun = boost::bind(draw_edge,_1,_2, image, in_image, points);
-	iterate_voronoi_edges(vd,fun);
+		if (it->is_primary()) {
+			draw_edge(it, image);
+		}
+	}
 }
 } /* namespace voronoi_art */
