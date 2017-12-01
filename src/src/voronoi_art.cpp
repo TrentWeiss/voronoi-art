@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "VD has " << vp.get_voronoi_diagram()->edges().size()
 			<< " edges." << std::endl;
 
-	Mat display(image_resized.size(), CV_8UC3, Scalar::all(0));
+	Mat display(image_resized.size(), image_resized.type(), Scalar::all(0));
 	Mat input_clone = image_resized.clone();
 	//display=input_clone;
 	if (vm.count("draw_edges")) {
@@ -80,6 +80,7 @@ int main(int argc, char* argv[]) {
 	}
 	if (!output_image.empty()) {
 		cv::imwrite(output_image,display);
+		cv::imwrite("resized_"+image_name,sharpenned_image);
 	} else {
 		namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
 		imshow("Voronoi Art", display);
