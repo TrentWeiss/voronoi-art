@@ -1,9 +1,10 @@
-#include <iostream>
+
 #include <string>
 #include "voronoi_art/image_processing/image_processing.h"
 #include "voronoi_art/voronoi_processing/voronoi_processing.h"
 #include <boost/program_options.hpp>
 
+#include <iostream>
 namespace po = boost::program_options;
 using namespace voronoi_art;
 
@@ -22,6 +23,7 @@ int main(int argc, char* argv[]) {
 			"sets the probability that a pixel will randomly be excluded. Default: 0.75")
 			("draw_edges,e", "Draw the edges of the voronoi diagram")
 			("draw_cells,c", "Draw the cells of the voronoi diagram")
+			("delaunay,d", "Use the Delaunay Triangulation instead of the voronoi diagram")
 			;
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -64,7 +66,8 @@ int main(int argc, char* argv[]) {
 	for (const cv::Point& point : cv_points) {
 		site_points.push_back(voronoi_processing::cv_point_to_voronoi(point));
 	}
-	const voronoi_processing vp(sharpenned_image, site_points);
+	bool delaunay = vm.count("delaunay")>0;
+	const voronoi_processing vp(sharpenned_image, site_points, delaunay);
 
 	std::cout << "VD has " << vp.get_voronoi_diagram()->edges().size()
 			<< " edges." << std::endl;
@@ -73,7 +76,12 @@ int main(int argc, char* argv[]) {
 	Mat input_clone = image_resized.clone();
 	//display=input_clone;
 	if (vm.count("draw_edges")) {
-		vp.draw_edges(display);
+		if(delaunay){
+			std::cout << "Drawing Delaunay edges" << std::endl;
+			vp.draw_delaunay_edges(display);
+		}else{
+			vp.draw_edges(display);
+		}
 	}
 	if (vm.count("draw_cells")) {
 		vp.draw_cells(display);
