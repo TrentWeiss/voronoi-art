@@ -1,9 +1,10 @@
-#include <iostream>
+
 #include <string>
 #include "voronoi_art/image_processing/image_processing.h"
 #include "voronoi_art/voronoi_processing/voronoi_processing.h"
 #include <boost/program_options.hpp>
 
+#include <iostream>
 namespace po = boost::program_options;
 using namespace voronoi_art;
 
@@ -22,6 +23,7 @@ int main(int argc, char* argv[]) {
 			"sets the probability that a pixel will randomly be excluded. Default: 0.75")
 			("draw_edges,e", "Draw the edges of the voronoi diagram")
 			("draw_cells,c", "Draw the cells of the voronoi diagram")
+			("delaunay,d", "Use the Delaunay Triangulation instead of the voronoi diagram")
 			;
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -64,7 +66,8 @@ int main(int argc, char* argv[]) {
 	for (const cv::Point& point : cv_points) {
 		site_points.push_back(voronoi_processing::cv_point_to_voronoi(point));
 	}
-	const voronoi_processing vp(sharpenned_image, site_points);
+	bool delaunay = vm.count("delaunay")>0;
+	const voronoi_processing vp(sharpenned_image, site_points, delaunay);
 
 	std::cout << "VD has " << vp.get_voronoi_diagram()->edges().size()
 			<< " edges." << std::endl;
@@ -79,9 +82,20 @@ int main(int argc, char* argv[]) {
 		vp.draw_cells(display);
 	}
 	if (!output_image.empty()) {
+		if(delaunay && vm.count("draw_edges")){
+			Mat delaunay_display(image_resized.size(), image_resized.type(), Scalar::all(0));
+			vp.draw_delaunay_edges(delaunay_display);
+			cv::imwrite("delaunay_" + output_image,delaunay_display);
+		}
 		cv::imwrite(output_image,display);
 		cv::imwrite("resized_"+image_name,sharpenned_image);
 	} else {
+		if(delaunay && vm.count("draw_edges")){
+			Mat delaunay_display(image_resized.size(), image_resized.type(), Scalar::all(0));
+			vp.draw_delaunay_edges(delaunay_display);
+			namedWindow("Delaunay Art", WINDOW_AUTOSIZE);
+			imshow("Delaunay Art", delaunay_display);
+		}
 		namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
 		imshow("Voronoi Art", display);
 		namedWindow("Input Image", WINDOW_AUTOSIZE);
