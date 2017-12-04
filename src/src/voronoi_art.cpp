@@ -76,20 +76,26 @@ int main(int argc, char* argv[]) {
 	Mat input_clone = image_resized.clone();
 	//display=input_clone;
 	if (vm.count("draw_edges")) {
-		if(delaunay){
-			std::cout << "Drawing Delaunay edges" << std::endl;
-			vp.draw_delaunay_edges(display);
-		}else{
-			vp.draw_edges(display);
-		}
+		vp.draw_edges(display);
 	}
 	if (vm.count("draw_cells")) {
 		vp.draw_cells(display);
 	}
 	if (!output_image.empty()) {
+		if(delaunay && vm.count("draw_edges")){
+			Mat delaunay_display(image_resized.size(), image_resized.type(), Scalar::all(0));
+			vp.draw_delaunay_edges(delaunay_display);
+			cv::imwrite("delaunay_" + output_image,delaunay_display);
+		}
 		cv::imwrite(output_image,display);
 		cv::imwrite("resized_"+image_name,sharpenned_image);
 	} else {
+		if(delaunay && vm.count("draw_edges")){
+			Mat delaunay_display(image_resized.size(), image_resized.type(), Scalar::all(0));
+			vp.draw_delaunay_edges(delaunay_display);
+			namedWindow("Delaunay Art", WINDOW_AUTOSIZE);
+			imshow("Delaunay Art", delaunay_display);
+		}
 		namedWindow("Voronoi Art", WINDOW_AUTOSIZE);
 		imshow("Voronoi Art", display);
 		namedWindow("Input Image", WINDOW_AUTOSIZE);

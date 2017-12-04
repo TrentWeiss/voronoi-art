@@ -67,11 +67,9 @@ void voronoi_processing::add_delaunay_half_segments(VD::const_cell_iterator& it)
 				 *
 				 */
 				A(0,0)=-m_edge;
-			//	A(0,1)=1.0;
 				Y[0]=p0.y()-m_edge*p0.x();
 
 				A(1,0)=-m_line;
-			//	A(1,1)=1.0;
 				Y[1]=site_point.y()-m_line*site_point.x();
 				X = A.inverse()*Y;
 				point_type intersection(X.x(),X.y());
