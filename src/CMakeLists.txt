@@ -9,8 +9,10 @@ project(voronoi_art)
 ## is used, also find other catkin packages
 set(BUILD_SHARED_LIBS true)
 find_package( OpenCV REQUIRED )
+find_package( Eigen3 REQUIRED )
 find_package( Boost 1.58 COMPONENTS program_options REQUIRED )
 include_directories(include)
+include_directories(${EIGEN3_INCLUDE_DIR})
 add_library(${PROJECT_NAME}_image_processing
  src/image_processing/image_processing.cpp
  src/image_processing/pixel.cpp

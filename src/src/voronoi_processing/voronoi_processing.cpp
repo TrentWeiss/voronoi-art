@@ -13,8 +13,13 @@
 #include <boost/geometry/geometries/polygon.hpp>
 #include <boost/geometry/algorithms/within.hpp>
 #include <iostream>
+#include <Eigen/Dense>
 namespace voronoi_art {
-
+struct point_slope{
+	Eigen::Vector2d x;
+	double y;
+};
+typedef struct point_slope point_slope_t;
 voronoi_processing::voronoi_processing(const Mat& input_image,
 		const std::vector<point_type>& site_points, bool extract_delaunay) {
 	vd_.reset(new VD);
@@ -31,36 +36,62 @@ voronoi_processing::voronoi_processing(const Mat& input_image,
 voronoi_processing::~voronoi_processing() {
 	// TODO Auto-generated destructor stub
 }
+//Eigen::Vector2d po
 void voronoi_processing::add_delaunay_half_segments(VD::const_cell_iterator& it){
 	point_type site_point = point_type(site_points_[it->source_index()]);
+	voronoi_processing::delaunay_vertex u =
+			boost::add_vertex<voronoi_processing::delaunay_triangulation>(*delaunay_triangulation_);
+	(*delaunay_triangulation_)[u]=site_point;
+	Eigen::Vector2d X,Y;
+	Eigen::Matrix2d A = Eigen::Matrix2d::Ones();
 	const voronoi_edge<VD::coordinate_type>* edge = it->incident_edge();
 		do {
 			edge = edge->next();
 			const voronoi_vertex<VD::coordinate_type>* v0 = edge->vertex0();
 			const voronoi_vertex<VD::coordinate_type>* v1 = edge->vertex1();
 			if (v0 and v1) {
-				point_type vertex(v0->x(),(v0->y()));
-				voronoi_processing::delaunay_vertex u =
-						boost::add_vertex<voronoi_processing::delaunay_triangulation>(*delaunay_triangulation_);
+				point_type p0(v0->x(),(v0->y()));
+				point_type p1(v1->x(),(v1->y()));
+				if((p1.x()-p0.x())==0.0){
+					continue;
+				}
+				double m_edge = (p1.y()-p0.y())/(p1.x()-p0.x());
+				if(m_edge==0.0){
+					continue;
+				}
+				double m_line = -1.0/m_edge;
+				/*
+				 * y-y_p = m * (x - x_p)
+				 * y-y_p = m*x - m*x_p
+				 * -m*x + y = y_p - m*x_p
+				 *
+				 */
+				A(0,0)=-m_edge;
+			//	A(0,1)=1.0;
+				Y[0]=p0.y()-m_edge*p0.x();
+
+				A(1,0)=-m_line;
+			//	A(1,1)=1.0;
+				Y[1]=site_point.y()-m_line*site_point.x();
+				X = A.inverse()*Y;
+				point_type intersection(X.x(),X.y());
 				voronoi_processing::delaunay_vertex v =
 						boost::add_vertex<voronoi_processing::delaunay_triangulation>(*delaunay_triangulation_);
+
 				delaunay_edge e; bool b;
 				boost::tie(e,b) = boost::add_edge<voronoi_processing::delaunay_triangulation>(u,v,*delaunay_triangulation_);
 				(*delaunay_triangulation_)[e]=input_image_.at<Vec3b>(cv_float_point(site_point.x(), site_point.y()));
-				(*delaunay_triangulation_)[u]=site_point;
-				(*delaunay_triangulation_)[v]=vertex;
+				(*delaunay_triangulation_)[v]=intersection;
 
 
-				vertex = point_type(v1->x(),(v1->y()));
-				u =
-						boost::add_vertex<voronoi_processing::delaunay_triangulation>(*delaunay_triangulation_);
-				v =
-						boost::add_vertex<voronoi_processing::delaunay_triangulation>(*delaunay_triangulation_);
-
-				boost::tie(e,b) = boost::add_edge<voronoi_processing::delaunay_triangulation>(u,v,*delaunay_triangulation_);
-				(*delaunay_triangulation_)[e]=input_image_.at<Vec3b>(cv_float_point(site_point.x(), site_point.y()));
-				(*delaunay_triangulation_)[u]=site_point;
-				(*delaunay_triangulation_)[v]=vertex;
+//				delaunay_edge e2; bool b2;
+//				point_type vertex2(v1->x(),(v1->y()));
+//				voronoi_processing::delaunay_vertex v2 =
+//						boost::add_vertex<voronoi_processing::delaunay_triangulation>(*delaunay_triangulation_);
+//
+//				boost::tie(e2,b2) = boost::add_edge<voronoi_processing::delaunay_triangulation>(u,v2,*delaunay_triangulation_);
+//				(*delaunay_triangulation_)[e2]=input_image_.at<Vec3b>(cv_float_point(site_point.x(), site_point.y()));
+//				(*delaunay_triangulation_)[v2]=vertex2;
 
 			}
 		} while (edge != it->incident_edge());
