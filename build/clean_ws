@@ -3,3 +3,6 @@ rm cmake_install.cmake
 rm CMakeCache.txt
 rm -rf CMakeFiles/
 rm Makefile
+rm install_manifest.txt
+rm *.so
+rm voronoi_art
