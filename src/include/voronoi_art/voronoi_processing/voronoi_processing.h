@@ -50,6 +50,7 @@ public:
 
 	std::shared_ptr<const voronoi_art::VD> get_voronoi_diagram() const;
 	const std::vector<point_type>& get_site_points() const;
+	delaunay_triangulation_ptr get_delaunay_triangulation() const;
 
 protected:
 	void add_delaunay_half_segments(VD::const_cell_iterator& it);

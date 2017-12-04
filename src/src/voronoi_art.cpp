@@ -1,4 +1,3 @@
-
 #include <string>
 #include "voronoi_art/image_processing/image_processing.h"
 #include "voronoi_art/voronoi_processing/voronoi_processing.h"
@@ -13,18 +12,21 @@ int main(int argc, char* argv[]) {
 	float float_threshold, float_prob;
 	std::string output_image;
 	po::options_description desc("Allowed options");
-	desc.add_options()("help,h", "produce help message")("input_image,i",po::value<string>(&image_name),
-			"sets input image. Currently, only .jpg files are supported.")
-			("output_image,o", po::value<string>(&output_image),
-			"file to write the output to. If not set, just opens a display window.")
-			("gradient_threshold,g",po::value<float>(&float_threshold)->default_value(0.0),
-			"sets the threshold for selecting pixels based on image gradient on a 0-1 scale. Default: 0.25")
-			("random_threshold,r",po::value<float>(&float_prob)->default_value(0.75),
-			"sets the probability that a pixel will randomly be excluded. Default: 0.75")
-			("draw_edges,e", "Draw the edges of the voronoi diagram")
-			("draw_cells,c", "Draw the cells of the voronoi diagram")
-			("delaunay,d", "Use the Delaunay Triangulation instead of the voronoi diagram")
-			;
+	desc.add_options()("help,h", "produce help message")("input_image,i",
+			po::value<string>(&image_name),
+			"sets input image. Currently, only .jpg files are supported.")(
+			"output_image,o", po::value<string>(&output_image),
+			"file to write the output to. If not set, just opens a display window.")(
+			"gradient_threshold,g",
+			po::value<float>(&float_threshold)->default_value(0.0),
+			"sets the threshold for selecting pixels based on image gradient on a 0-1 scale. Default: 0.25")(
+			"random_threshold,r",
+			po::value<float>(&float_prob)->default_value(0.75),
+			"sets the probability that a pixel will randomly be excluded. Default: 0.75")(
+			"draw_edges,e", "Draw the edges of the voronoi diagram")(
+			"draw_cells,c", "Draw the cells of the voronoi diagram")(
+			"delaunay,d",
+			"Use the Delaunay Triangulation instead of the voronoi diagram");
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
 	po::notify(vm);
@@ -66,12 +68,17 @@ int main(int argc, char* argv[]) {
 	for (const cv::Point& point : cv_points) {
 		site_points.push_back(voronoi_processing::cv_point_to_voronoi(point));
 	}
-	bool delaunay = vm.count("delaunay")>0;
+	bool delaunay = vm.count("delaunay") > 0;
 	const voronoi_processing vp(sharpenned_image, site_points, delaunay);
 
 	std::cout << "VD has " << vp.get_voronoi_diagram()->edges().size()
 			<< " edges." << std::endl;
 
+	if (!(!vp.get_delaunay_triangulation())) {
+		std::cout << "Delaunay Triangulation has: "
+				<< vp.get_delaunay_triangulation()->m_edges.size() << " edges."
+				<< std::endl;
+	}
 	Mat display(image_resized.size(), image_resized.type(), Scalar::all(0));
 	Mat input_clone = image_resized.clone();
 	//display=input_clone;
@@ -82,16 +89,18 @@ int main(int argc, char* argv[]) {
 		vp.draw_cells(display);
 	}
 	if (!output_image.empty()) {
-		if(delaunay && vm.count("draw_edges")){
-			Mat delaunay_display(image_resized.size(), image_resized.type(), Scalar::all(0));
+		if (delaunay && vm.count("draw_edges")) {
+			Mat delaunay_display(image_resized.size(), image_resized.type(),
+					Scalar::all(0));
 			vp.draw_delaunay_edges(delaunay_display);
-			cv::imwrite("delaunay_" + output_image,delaunay_display);
+			cv::imwrite("delaunay_" + output_image, delaunay_display);
 		}
-		cv::imwrite(output_image,display);
-		cv::imwrite("resized_"+image_name,sharpenned_image);
+		cv::imwrite(output_image, display);
+		cv::imwrite("resized_" + image_name, sharpenned_image);
 	} else {
-		if(delaunay && vm.count("draw_edges")){
-			Mat delaunay_display(image_resized.size(), image_resized.type(), Scalar::all(0));
+		if (delaunay && vm.count("draw_edges")) {
+			Mat delaunay_display(image_resized.size(), image_resized.type(),
+					Scalar::all(0));
 			vp.draw_delaunay_edges(delaunay_display);
 			namedWindow("Delaunay Art", WINDOW_AUTOSIZE);
 			imshow("Delaunay Art", delaunay_display);
