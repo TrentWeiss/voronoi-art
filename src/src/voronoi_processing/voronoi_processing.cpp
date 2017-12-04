@@ -106,9 +106,6 @@ void voronoi_processing::extract_delaunay_triangulation() {
 			add_delaunay_half_segments(it);
 		}
 	}
-	std::cout << "Delaunay Triangulation has: "
-			<< delaunay_triangulation_->m_edges.size() << " edges."
-			<< std::endl;
 }
 point_type voronoi_processing::cv_point_to_voronoi(const cv_float_point& pt) {
 	return point_type(pt.x, pt.y);
@@ -255,6 +252,9 @@ void voronoi_processing::draw_delaunay_edges(Mat& image) const {
 		line(image, acv, bcv, *color);
 		it++;
 	}
+}
+voronoi_processing::delaunay_triangulation_ptr voronoi_processing::get_delaunay_triangulation() const {
+	return delaunay_triangulation_ptr(delaunay_triangulation_);
 }
 
 void voronoi_processing::draw_delaunay_cells(Mat& image) const {
