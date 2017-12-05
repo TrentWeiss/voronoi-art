@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 		exit(0);
 	}
 	if (image_name.compare("") == 0) {
-		std::cerr << "Input jpg must be specified." << std::endl;
+		std::cerr << "Input jpg must be specified. Add -h argument for more information." << std::endl;
 		desc.print(std::cerr, 25);
 		exit(-1);
 	}
