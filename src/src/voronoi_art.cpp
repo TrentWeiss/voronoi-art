@@ -9,7 +9,7 @@ using namespace voronoi_art;
 
 int main(int argc, char* argv[]) {
 	std::string image_name;
-	float float_threshold, float_prob;
+	double float_threshold, float_prob;
 	std::string output_image;
 	po::options_description desc("Allowed options");
 	desc.add_options()("help,h", "produce help message")("input_image,i",
@@ -17,12 +17,12 @@ int main(int argc, char* argv[]) {
 			"sets input image. Currently, only .jpg files are supported.")(
 			"output_image,o", po::value<string>(&output_image),
 			"file to write the output to. If not set, just opens a display window.")
-			("gradient_threshold,g",po::value<float>(&float_threshold)->default_value(0.0), "Threshold for the image gradient. Pixels with a gradient above this value will be selected as site points.")
-			("random_threshold,r",po::value<float>(&float_prob)->default_value(0.97),"sets the probability that a pixel will randomly NOT be selected as a site point, regardless of the gradient filter.")(
+			("gradient_threshold,g",po::value<double>(&float_threshold)->default_value(0.0), "Threshold for the image gradient (0.0 - 1.0 scale). Pixels with a gradient above this value will be selected as site points.")
+			("random_threshold,r",po::value<double>(&float_prob)->default_value(0.97),"sets the probability that a pixel will randomly NOT be selected as a site point, regardless of the gradient filter.")(
 			"draw_edges,e", "Draw the edges of the voronoi diagram")(
 			"draw_cells,c", "Draw the cells of the voronoi diagram")(
 			"delaunay,d",
-			"Use the Delaunay Triangulation instead of the voronoi diagram");
+			"Extract and render the Delaunay Triangulation from the voronoi diagram");
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
 	po::notify(vm);
@@ -41,6 +41,12 @@ int main(int argc, char* argv[]) {
 	{
 		cout << "Could not open or find the image" << std::endl;
 		return -1;
+	}
+	if(!vm.count("draw_edges") and !vm.count("draw_cells")){
+
+		std::cerr << "Must specify either draw_edges (-e) or draw_cells (-c)." << std::endl;
+		desc.print(std::cerr, 25);
+		exit(-1);
 	}
 	Size size(600, 600);
 	Mat image_resized, sharpenned_image;

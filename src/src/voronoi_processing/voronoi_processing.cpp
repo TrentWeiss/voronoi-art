@@ -28,8 +28,6 @@ voronoi_processing::voronoi_processing(const Mat& input_image,
 	site_points_ = std::vector<point_type>(site_points);
 	construct_voronoi(site_points_.begin(), site_points_.end(), vd_.get());
 	if (extract_delaunay) {
-		std::cout << "Extracting delaunay triangulation from voronoi diagram"
-				<< std::endl;
 		delaunay_triangulation_.reset(new delaunay_triangulation);
 		extract_delaunay_triangulation();
 	}
