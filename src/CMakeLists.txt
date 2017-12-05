@@ -34,7 +34,13 @@ target_link_libraries(${PROJECT_NAME}
  ${PROJECT_NAME}_voronoi_processing
  )
 
-install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_voronoi_processing ${PROJECT_NAME}_image_processing
+add_executable(${PROJECT_NAME}_video src/voronoi_video.cpp)
+target_link_libraries(${PROJECT_NAME}_video 
+ ${PROJECT_NAME}_image_processing
+ ${PROJECT_NAME}_voronoi_processing
+ )
+
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_video ${PROJECT_NAME}_voronoi_processing ${PROJECT_NAME}_image_processing
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )
