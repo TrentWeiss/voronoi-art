@@ -40,7 +40,7 @@ target_link_libraries(${PROJECT_NAME}_video
  ${PROJECT_NAME}_voronoi_processing
  )
 
-install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_voronoi_processing ${PROJECT_NAME}_image_processing
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_video ${PROJECT_NAME}_voronoi_processing ${PROJECT_NAME}_image_processing
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )
