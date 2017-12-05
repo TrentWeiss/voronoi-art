@@ -16,9 +16,9 @@ int main(int argc, char** argv) {
 	desc.add_options()
 			("help,h", "Print help message and exit, all other options are ignored")
 			("output_video,o", po::value<string>(&output_video), "file to write the output to. If not set, no file is written.")
-			("frame_rate,f", po::value<int>(&frame_rate)->default_value(7), "Frames per second for the output video. Irrelevant if output_video is not specified. Default: 7")
-			("gradient_threshold,g",po::value<float>(&float_threshold)->default_value(0.0), "If negative or not set, no gradient filtering is applied")
-			("random_threshold,r",po::value<float>(&float_prob)->default_value(0.95),"sets the probability that a pixel will randomly be excluded. Default: 0.95");
+			("frame_rate,f", po::value<int>(&frame_rate)->default_value(7), "Frames per second for the output video. Irrelevant if output_video is not specified.")
+			("gradient_threshold,g",po::value<float>(&float_threshold)->default_value(0.0), "Threshold for the image gradient. Pixels with a gradient above this value will be selected as site points.")
+			("random_threshold,r",po::value<float>(&float_prob)->default_value(0.97),"sets the probability that a pixel will randomly NOT be selected as a site point.");
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
 	po::notify(vm);

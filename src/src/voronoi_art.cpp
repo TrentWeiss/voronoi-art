@@ -16,13 +16,9 @@ int main(int argc, char* argv[]) {
 			po::value<string>(&image_name),
 			"sets input image. Currently, only .jpg files are supported.")(
 			"output_image,o", po::value<string>(&output_image),
-			"file to write the output to. If not set, just opens a display window.")(
-			"gradient_threshold,g",
-			po::value<float>(&float_threshold)->default_value(0.0),
-			"sets the threshold for selecting pixels based on image gradient on a 0-1 scale. Default: 0.25")(
-			"random_threshold,r",
-			po::value<float>(&float_prob)->default_value(0.75),
-			"sets the probability that a pixel will randomly be excluded. Default: 0.75")(
+			"file to write the output to. If not set, just opens a display window.")
+			("gradient_threshold,g",po::value<float>(&float_threshold)->default_value(0.0), "Threshold for the image gradient. Pixels with a gradient above this value will be selected as site points.")
+			("random_threshold,r",po::value<float>(&float_prob)->default_value(0.97),"sets the probability that a pixel will randomly NOT be selected as a site point, regardless of the gradient filter.")(
 			"draw_edges,e", "Draw the edges of the voronoi diagram")(
 			"draw_cells,c", "Draw the cells of the voronoi diagram")(
 			"delaunay,d",
