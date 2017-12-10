@@ -13,6 +13,7 @@
 #include <boost/geometry/geometries/polygon.hpp>
 #include <boost/geometry/algorithms/within.hpp>
 #include <iostream>
+#include <boost/timer/timer.hpp>
 #include <Eigen/Dense>
 namespace voronoi_art {
 struct point_slope {
@@ -26,9 +27,13 @@ voronoi_processing::voronoi_processing(const Mat& input_image,
 	input_image_ = input_image.clone();
 	input_image_pixels_ = image_processing::image_to_point_vector(input_image_);
 	site_points_ = std::vector<point_type>(site_points);
-	construct_voronoi(site_points_.begin(), site_points_.end(), vd_.get());
+	{
+		boost::timer::auto_cpu_timer voronoi_timer("Voronoi Diagram took: %t sec CPU, %w sec real\n");
+		construct_voronoi(site_points_.begin(), site_points_.end(), vd_.get());
+	}
 	if (extract_delaunay) {
 		delaunay_triangulation_.reset(new delaunay_triangulation);
+		boost::timer::auto_cpu_timer voronoi_timer("Extracting Delaunay Triangulation took: %t sec CPU, %w sec real\n");
 		extract_delaunay_triangulation();
 	}
 }

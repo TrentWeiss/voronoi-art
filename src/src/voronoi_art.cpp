@@ -2,7 +2,6 @@
 #include "voronoi_art/image_processing/image_processing.h"
 #include "voronoi_art/voronoi_processing/voronoi_processing.h"
 #include <boost/program_options.hpp>
-
 #include <iostream>
 namespace po = boost::program_options;
 using namespace voronoi_art;
