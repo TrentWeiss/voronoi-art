@@ -45,6 +45,8 @@ public:
 	static vector<Pixel> image_to_point_vector(const Mat& image);
 	vector<Point> filter_intersection(const Mat& input, const vector<PixelFunctor>& filters);
 	vector<Point> filter_union(const Mat& input, const vector<PixelFunctor>& filters);
+	PixelFunctor pixel_gt(const Mat& input, const unsigned int& threshold);
+	PixelFunctor pixel_lt(const Mat& input, const unsigned int& threshold);
 	PixelFunctor gradient_threshold(const Mat& input, const unsigned int& threshold);
 	PixelFunctor laplacian_threshold(const Mat& input, const unsigned int& threshold);
 	PixelFunctor random_dropout(const float& dropout_prob);

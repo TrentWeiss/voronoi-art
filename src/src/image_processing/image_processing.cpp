@@ -171,5 +171,26 @@ PixelFunctor image_processing::laplacian_threshold(const Mat& input,
 	const Mat laplacian = image_laplacian(input);
 	return boost::bind(simple_threshold,laplacian,_2,_3,threshold);
 }
+bool gt_threshold(const Mat& input, const unsigned int& r,
+		const unsigned int& c, const unsigned int& threshold) {
+	Scalar intensity = input.at<Vec3b>(r, c);
+	return intensity.ddot(Scalar(1.0,1.0,1.0,0.0))/3.0 >= (double)threshold;
+
+}
+bool lt_threshold(const Mat& input, const unsigned int& r,
+		const unsigned int& c, const unsigned int& threshold) {
+	Scalar intensity = input.at<Vec3b>(r, c);
+	return intensity.ddot(Scalar(1.0,1.0,1.0,0.0))/3.0 < (double)threshold;
+
+}
+PixelFunctor image_processing::pixel_lt(const Mat& input,
+		const unsigned int& threshold) {
+	return boost::bind(lt_threshold,input,_2,_3,threshold);
+}
+PixelFunctor image_processing::pixel_gt(const Mat& input,
+		const unsigned int& threshold) {
+	return boost::bind(gt_threshold,input,_2,_3,threshold);
+}
 } /* namespace voronoi_art */
+
 
