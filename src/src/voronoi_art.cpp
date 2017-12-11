@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
 	Mat image_resized, sharpenned_image;
 	resize(image, image_resized, size);                      //resize image
 	voronoi_art::image_processing im_proc;
-	sharpenned_image = im_proc.sharpen(image_resized);
+	sharpenned_image = image_processing::sharpen(image_resized);
 	std::vector<cv::Point> cv_points;
 	vector<PixelFunctor> filters;
 	filters.push_back(im_proc.random_dropout(float_prob));
