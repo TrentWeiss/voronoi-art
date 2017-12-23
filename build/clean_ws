@@ -6,3 +6,4 @@ rm Makefile
 rm install_manifest.txt
 rm *.so
 rm voronoi_art
+rm voronoi_art_video
